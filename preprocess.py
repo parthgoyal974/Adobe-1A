@@ -664,29 +664,36 @@ class PDFHeuristicExtractor:
         labelled.sort(key=lambda f: (f['page_num'], f['y0']))
         return labelled
 
+if __name__ == "__main__":
+    import time, json
+    from pathlib import Path
 
-import time, json
-from pathlib import Path
+    t0 = time.time()
 
-start_time = time.time()
-extractor  = PDFHeuristicExtractor()
+    extractor   = PDFHeuristicExtractor()
 
-pdf_path   = r"C:\Users\91896\Desktop\1A\Adobe-1A\data\pdfs\attention is all you need.pdf"
-outline    = extractor.extract_outline(pdf_path)
+    root_dir    = Path(__file__).resolve().parent
+    in_dir      = root_dir / "input"
+    out_dir     = root_dir / "output"
+    out_dir.mkdir(parents=True, exist_ok=True)
 
-# print to screen
-print(json.dumps(outline, indent=2, ensure_ascii=False))  
+    # find all PDFs (recursively only if you want that)
+    pdf_files = sorted(in_dir.glob("*.pdf"))
 
-# optional: save files
-current_dir = Path(__file__).parent
-pre_dir     = current_dir / "data" / "pre"
-pre_dir.mkdir(parents=True, exist_ok=True)
+    if not pdf_files:
+        print("No PDFs found in", in_dir)
+        exit()
 
-pdf_name = Path(pdf_path).stem
-with open(pre_dir / f"{pdf_name}_outline.json", "w", encoding="utf-8") as f:
-    json.dump(outline, f, indent=2, ensure_ascii=False)
+    for pdf_path in pdf_files:
+        try:
+            outline = extractor.extract_outline(str(pdf_path))
 
-features = extractor.extract_document_features(pdf_path)
-extractor.save_features(features, str(pre_dir / f"{pdf_name}_features.json"))
+            json_path = out_dir / f"{pdf_path.stem}.json"
+            with open(json_path, "w", encoding="utf-8") as f:
+                json.dump(outline, f, indent=2, ensure_ascii=False)
 
-print(f"Execution time: {time.time() - start_time:.2f} s")
+            print(f"✔  {pdf_path.name:<40} →  {json_path.name}")
+        except Exception as e:
+            print(f"✘  {pdf_path.name:<40}  ({e})")
+
+    print(f"\nProcessed {len(pdf_files)} file(s) in {time.time()-t0:.1f}s")

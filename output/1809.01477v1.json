@@ -1,0 +1,395 @@
+{
+  "title": "arXiv:1809.01477v1  [cs.IR]",
+  "outline": [
+    {
+      "level": "H1",
+      "text": "A Supervised Learning Approach For Heading",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "Detection",
+      "page": 1
+    },
+    {
+      "level": "H3",
+      "text": "Sahib Singh Budhiraja and Vijay Mago",
+      "page": 1
+    },
+    {
+      "level": "H2",
+      "text": "1Introduction",
+      "page": 1
+    },
+    {
+      "level": "H3",
+      "text": "the data provided.",
+      "page": 1
+    },
+    {
+      "level": "H3",
+      "text": "This research involved comparing and systematically testing",
+      "page": 1
+    },
+    {
+      "level": "H2",
+      "text": "2Related Work",
+      "page": 2
+    },
+    {
+      "level": "H3",
+      "text": "and accurately analyse the textual layout of a document and divide it into con-",
+      "page": 2
+    },
+    {
+      "level": "H2",
+      "text": "3Methodology",
+      "page": 3
+    },
+    {
+      "level": "H3",
+      "text": "font−",
+      "page": 3
+    },
+    {
+      "level": "H3",
+      "text": "size :",
+      "page": 3
+    },
+    {
+      "level": "H3",
+      "text": "px[",
+      "page": 3
+    },
+    {
+      "level": "H3",
+      "text": "The dataset is considered imbalanced if the preva-",
+      "page": 5
+    },
+    {
+      "level": "H3",
+      "text": "upper case as well.",
+      "page": 5
+    },
+    {
+      "level": "H3",
+      "text": "This variable tells whether the text is in upper case",
+      "page": 5
+    },
+    {
+      "level": "H3",
+      "text": "the text to 11,",
+      "page": 7
+    },
+    {
+      "level": "H3",
+      "text": "After pre-processing,",
+      "page": 8
+    },
+    {
+      "level": "H3",
+      "text": "14 training features are established.",
+      "page": 8
+    },
+    {
+      "level": "H3",
+      "text": "There is a need to",
+      "page": 8
+    },
+    {
+      "level": "H3",
+      "text": "The same process is repeated for all the classiﬁers and their individual set of",
+      "page": 8
+    },
+    {
+      "level": "H3",
+      "text": "Tuning each classiﬁers parameters for optimal performance is performed using",
+      "page": 8
+    },
+    {
+      "level": "H3",
+      "text": "selected,",
+      "page": 9
+    },
+    {
+      "level": "H3",
+      "text": "Box 1:",
+      "page": 10
+    },
+    {
+      "level": "H3",
+      "text": "Code Snippet for Training Decision Tree Classiﬁer",
+      "page": 10
+    },
+    {
+      "level": "H3",
+      "text": "Box 2:",
+      "page": 10
+    },
+    {
+      "level": "H3",
+      "text": "Code Snippet for Training Support Vector Machine Classiﬁer",
+      "page": 10
+    },
+    {
+      "level": "H3",
+      "text": "Box 3:",
+      "page": 10
+    },
+    {
+      "level": "H3",
+      "text": "Code Snippet for Training k-Nearest Neighbors Classiﬁer",
+      "page": 10
+    },
+    {
+      "level": "H3",
+      "text": "10,",
+      "page": 10
+    },
+    {
+      "level": "H3",
+      "text": "Box 4:",
+      "page": 11
+    },
+    {
+      "level": "H3",
+      "text": "Code Snippet for Training Random Forest Classiﬁer",
+      "page": 11
+    },
+    {
+      "level": "H3",
+      "text": "RandomForestClassiﬁer(n estimators =",
+      "page": 11
+    },
+    {
+      "level": "H3",
+      "text": "criterion =",
+      "page": 11
+    },
+    {
+      "level": "H3",
+      "text": "‘gini’,",
+      "page": 11
+    },
+    {
+      "level": "H3",
+      "text": "max depth",
+      "page": 11
+    },
+    {
+      "level": "H3",
+      "text": "rndForstclf =",
+      "page": 11
+    },
+    {
+      "level": "H3",
+      "text": "rndForstclf.ﬁt(traindata,",
+      "page": 11
+    },
+    {
+      "level": "H3",
+      "text": "truelabels)",
+      "page": 11
+    },
+    {
+      "level": "H3",
+      "text": "Box 5:",
+      "page": 11
+    },
+    {
+      "level": "H3",
+      "text": "Code Snippet for Training Gaussian Naive Bayes Classiﬁer",
+      "page": 11
+    },
+    {
+      "level": "H3",
+      "text": "gaussianclf =",
+      "page": 11
+    },
+    {
+      "level": "H3",
+      "text": "gaussianclf.ﬁt(traindata,",
+      "page": 11
+    },
+    {
+      "level": "H3",
+      "text": "truelabels)",
+      "page": 11
+    },
+    {
+      "level": "H3",
+      "text": "Box 6:",
+      "page": 12
+    },
+    {
+      "level": "H3",
+      "text": "Code Snippet for Training Quadratic Discriminant Analysis Classiﬁer",
+      "page": 12
+    },
+    {
+      "level": "H3",
+      "text": "0.5],",
+      "page": 12
+    },
+    {
+      "level": "H3",
+      "text": "Logistic Regression It is a discriminative classiﬁer,",
+      "page": 12
+    },
+    {
+      "level": "H3",
+      "text": "therefore it works by dis-",
+      "page": 12
+    },
+    {
+      "level": "H3",
+      "text": "Box 7:",
+      "page": 12
+    },
+    {
+      "level": "H3",
+      "text": "Code Snippet for Training Logistic Regression Classiﬁer",
+      "page": 12
+    },
+    {
+      "level": "H3",
+      "text": "logisticRegr =",
+      "page": 12
+    },
+    {
+      "level": "H3",
+      "text": "logisticRegr.ﬁt(traindata,",
+      "page": 12
+    },
+    {
+      "level": "H3",
+      "text": "truelabels)",
+      "page": 12
+    },
+    {
+      "level": "H3",
+      "text": "Gradient Boosting This classiﬁcation method uses an ensemble of weak pre-",
+      "page": 12
+    },
+    {
+      "level": "H3",
+      "text": "Box 8:",
+      "page": 12
+    },
+    {
+      "level": "H3",
+      "text": "Code Snippet for Training Gradient Boosting Classiﬁer",
+      "page": 12
+    },
+    {
+      "level": "H3",
+      "text": "grdbstcf =",
+      "page": 12
+    },
+    {
+      "level": "H3",
+      "text": "GradientBoostingClassiﬁer(loss =",
+      "page": 12
+    },
+    {
+      "level": "H3",
+      "text": "‘deviance’,",
+      "page": 12
+    },
+    {
+      "level": "H3",
+      "text": "learning rate",
+      "page": 12
+    },
+    {
+      "level": "H3",
+      "text": "Box 9:",
+      "page": 13
+    },
+    {
+      "level": "H3",
+      "text": "Code Snippet for Training Neural Net Classiﬁer",
+      "page": 13
+    },
+    {
+      "level": "H3",
+      "text": "nurlntclf =",
+      "page": 13
+    },
+    {
+      "level": "H3",
+      "text": "MLPRegressor(hidden layer sizes =",
+      "page": 13
+    },
+    {
+      "level": "H3",
+      "text": "(100,",
+      "page": 13
+    },
+    {
+      "level": "H3",
+      "text": "activation =",
+      "page": 13
+    },
+    {
+      "level": "H2",
+      "text": "4Test Results",
+      "page": 14
+    },
+    {
+      "level": "H3",
+      "text": "When dealing with a large number of doc-",
+      "page": 14
+    },
+    {
+      "level": "H3",
+      "text": "Table 4 shows the AUC scores for the",
+      "page": 14
+    },
+    {
+      "level": "H2",
+      "text": "5Discussion",
+      "page": 15
+    },
+    {
+      "level": "H3",
+      "text": "We recorded the time (in seconds)",
+      "page": 15
+    },
+    {
+      "level": "H3",
+      "text": "required for training each classiﬁer and also",
+      "page": 15
+    },
+    {
+      "level": "H2",
+      "text": "6Testing The Generalizability",
+      "page": 16
+    },
+    {
+      "level": "H2",
+      "text": "7Analysing The Results",
+      "page": 16
+    },
+    {
+      "level": "H2",
+      "text": "8Extending The Classiﬁer",
+      "page": 17
+    },
+    {
+      "level": "H2",
+      "text": "9Conclusion",
+      "page": 17
+    },
+    {
+      "level": "H2",
+      "text": "Acknowledgment",
+      "page": 17
+    },
+    {
+      "level": "H2",
+      "text": "References",
+      "page": 17
+    }
+  ]
+}

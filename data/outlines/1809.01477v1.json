@@ -1,0 +1,95 @@
+{
+  "title": "A Supervised Learning Approach For Heading Detection",
+  "outline": [
+    {
+      "level": "H1",
+      "text": "Abstract",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "Keywords",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "1 Introduction",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "2 Related Work",
+      "page": 3
+    },
+    {
+      "level": "H1",
+      "text": "3 Methodology",
+      "page": 4
+    },
+    {
+      "level": "H2",
+      "text": "3.1 Data Collection",
+      "page": 4
+    },
+    {
+      "level": "H2",
+      "text": "3.2 Data Preprocessing",
+      "page": 5
+    },
+    {
+      "level": "H2",
+      "text": "3.3 Feature Selection",
+      "page": 7
+    },
+    {
+      "level": "H2",
+      "text": "3.4 Grid Search",
+      "page": 8
+    },
+    {
+      "level": "H2",
+      "text": "3.5 Training",
+      "page": 9
+    },
+    {
+      "level": "H1",
+      "text": "4 Test Results",
+      "page": 12
+    },
+    {
+      "level": "H1",
+      "text": "5 Discussion",
+      "page": 14
+    },
+    {
+      "level": "H1",
+      "text": "6 Testing The Generalizability",
+      "page": 16
+    },
+    {
+      "level": "H1",
+      "text": "7 Analysing The Results",
+      "page": 17
+    },
+    {
+      "level": "H1",
+      "text": "8 Extending The Classifier",
+      "page": 18
+    },
+    {
+      "level": "H1",
+      "text": "9 Conclusion",
+      "page": 19
+    },
+    {
+      "level": "H1",
+      "text": "Acknowledgment",
+      "page": 19
+    },
+    {
+      "level": "H1",
+      "text": "References",
+      "page": 19
+    }
+  ]
+}

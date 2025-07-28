@@ -673,8 +673,8 @@ if __name__ == "__main__":
     extractor   = PDFHeuristicExtractor()
 
     root_dir    = Path(__file__).resolve().parent
-    in_dir      = root_dir / "input"
-    out_dir     = root_dir / "output"
+    in_dir      = root_dir / "app/input"
+    out_dir     = root_dir / "app/output"
     out_dir.mkdir(parents=True, exist_ok=True)
 
     # find all PDFs (recursively only if you want that)

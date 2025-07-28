@@ -5,9 +5,8 @@ import re
 from collections import Counter, defaultdict
 from typing import Dict, List, Tuple, Any
 import json
-import pickle
 from scipy.spatial.distance import cosine
-from difflib import SequenceMatcher
+# from difflib import SequenceMatcher
 
 class PDFHeuristicExtractor:
     """
@@ -72,57 +71,68 @@ class PDFHeuristicExtractor:
     def _merge_raw_spans(self, spans_data: List[Dict]) -> List[Dict]:
         merged = []
         EPS = 0.5
-        i = 0
-        n = len(spans_data)
+        i, n = 0, len(spans_data)
+
         while i < n:
-            base = spans_data[i]
-            y1_base = base['bbox'][3]
-            group = [base]
+            base     = spans_data[i]
+            y1_base  = base["bbox"][3]
+            group    = [base]
             j = i + 1
-            while j < n and abs(spans_data[j]['bbox'][3] - y1_base) <= EPS:
+            while j < n and abs(spans_data[j]["bbox"][3] - y1_base) <= EPS:
                 group.append(spans_data[j])
                 j += 1
-            group.sort(key=lambda s: s['bbox'][0])
+            group.sort(key=lambda s: s["bbox"][0])
+
             buf = ""
             for span_info in group:
-                text = span_info['text']
-                # split on trailing punctuation or space
-                for token in re.split(r'(\W)$', text):
+                for token in re.split(r'(\s)', span_info["text"]):   # keep spaces as tokens
                     if not token:
                         continue
-                    buf += token
-                    if re.match(r'.+[!?]$', token) or re.match(r'.+[!?].\Z', token):
+
+                    visible = token.rstrip()         # token without trailing blanks
+                    buf += token                     # append ONCE
+
+                    if not visible:                  # token was only spaces
+                        continue
+
+                    last_char = visible[-1]
+
+                    # break if last char is not alnum / ! / ?        (dot counts as break)
+                    if not re.match(r'[A-Za-z0-9!?]', last_char):
                         merged.append({
-                            'span': span_info['span'],         # carry the original span object
-                            'block_idx': span_info['block_idx'],
-                            'line_idx': span_info['line_idx'],
-                            'span_idx': span_info['span_idx'],
-                            'bbox': (
+                            "span":      span_info["span"],
+                            "block_idx": span_info["block_idx"],
+                            "line_idx":  span_info["line_idx"],
+                            "span_idx":  span_info["span_idx"],
+                            "bbox": (
                                 group[0]['bbox'][0],
                                 y1_base - (group[0]['bbox'][3] - group[0]['bbox'][1]),
                                 group[-1]['bbox'][2],
                                 y1_base
                             ),
-                            'text': buf.strip(),
-                            'page_num': span_info['page_num']
+                            "text":     buf.strip(),
+                            "page_num": span_info["page_num"]
                         })
                         buf = ""
+
             if buf.strip():
                 merged.append({
-                    'span': group[0]['span'],             # pick a representative span
-                    'block_idx': group[0]['block_idx'],
-                    'line_idx': group[0]['line_idx'],
-                    'span_idx': group[0]['span_idx'],
-                    'bbox': (
+                    "span":      group[0]["span"],
+                    "block_idx": group[0]["block_idx"],
+                    "line_idx":  group[0]["line_idx"],
+                    "span_idx":  group[0]["span_idx"],
+                    "bbox": (
                         group[0]['bbox'][0],
                         y1_base - (group[0]['bbox'][3] - group[0]['bbox'][1]),
                         group[-1]['bbox'][2],
                         y1_base
                     ),
-                    'text': buf.strip(),
-                    'page_num': base['page_num']
+                    "text":     buf.strip(),
+                    "page_num": base["page_num"]
                 })
+
             i = j
+
         return merged
 
     
@@ -520,7 +530,7 @@ start_time = time.time()
 extractor = PDFHeuristicExtractor()
 
 # Step 2: Load the PDF
-pdf_path = "/home/sakamuri/Documents/Adobe-Hack/PYfiles/data/pdfs/1809.01477v1.pdf"
+pdf_path = r"C:\Users\91896\Desktop\1A\Adobe-1A\data\pdfs\9_1_1961.pdf"
 doc = fitz.open(pdf_path)
 
 # Step 3: Extract features

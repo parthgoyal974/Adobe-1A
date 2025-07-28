@@ -517,53 +517,176 @@ class PDFHeuristicExtractor:
         with open(filepath, 'r', encoding='utf-8') as f:
             return json.load(f)
 
+    def extract_outline(self, pdf_path: str,
+                        max_heading_levels: int = 3) -> Dict:
+        """
+        1. run feature extraction
+        2. detect title (dynamic)
+        3. detect headings + assign H1/H2/H3 dynamically
+        4. return the exact JSON structure you asked for
+        """
+        feats = self.extract_document_features(pdf_path)
 
-import time
-import os
+        title_span   = self._find_title(feats)
+        heading_spans = self._find_headings(feats,
+                                            title_span,
+                                            max_heading_levels=max_heading_levels)
+
+        outline_json = [
+            dict(level=sp['level'],
+                text=sp['text'],
+                page=sp['page_num'] + 1)          # human page numbers start at 1
+            for sp in heading_spans
+        ]
+
+        return dict(title=title_span['text'] if title_span else "",
+                    outline=outline_json)
+
+    # --------------------------------------------------------------------------
+    #  TITLE – purely data-driven, no constants
+    # --------------------------------------------------------------------------
+    def _find_title(self, feats: List[Dict]) -> Dict:
+        first_page = [f for f in feats if f['page_num'] == 0]
+        if not first_page:
+            return {}
+
+        # Build a score based on *relative* measures
+        # - font_size_z           : bigger than typical page font
+        # - vertical_position_z   : closer to top
+        # - horizontal_centring   : centred
+        # - whitespace_above_z    : isolated
+        sizes = np.array([f['font_size'] for f in first_page])
+        y0s   = np.array([f['y0']         for f in first_page])
+        wsa   = np.array([f['whitespace_above'] for f in first_page])
+
+        size_z = (sizes - sizes.mean()) / (sizes.std()  + 1e-6)
+        y_inv  = (y0s.max() - y0s)                        # distance from top
+        y_z    = (y_inv - y_inv.mean()) / (y_inv.std() + 1e-6)
+        wsa_z  = (wsa  - wsa.mean()) / (wsa.std()  + 1e-6)
+
+        for i, f in enumerate(first_page):
+            f['_title_score'] = (
+                3*size_z[i] +                       # heavy weight on size
+                2*y_z[i] +
+                1*wsa_z[i] +
+                (1 if f['is_centered'] else 0)
+            )
+
+        return max(first_page, key=lambda f: f['_title_score'])
+
+    # --------------------------------------------------------------------------
+    #  HEADINGS – dynamic threshold + dynamic level mapping
+    # --------------------------------------------------------------------------
+    # ------------------------------------------------------------------
+#  HEADINGS – dynamic threshold + better filtering
+# ------------------------------------------------------------------
+    def _find_headings(self,
+                    feats: List[Dict],
+                    title_span: Dict,
+                    *,
+                    max_heading_levels: int = 3) -> List[Dict]:
+
+        # -----------------------------------------------------------
+        # 0. pre-filter obvious body text
+        # -----------------------------------------------------------
+        prelim = [f for f in feats
+                if f['word_count'] <= 20            # headings are short
+                and not (f['ends_with_period'] and f['word_count'] > 5)]
+
+        if title_span:
+            prelim = [f for f in prelim if f is not title_span]
+        if not prelim:
+            return []
+
+        # -----------------------------------------------------------
+        # 1. build simple priority score
+        #    – centred + whitespace dominate
+        # -----------------------------------------------------------
+        # normalise font sizes & whitespace once
+        size      = np.array([f['font_size']        for f in prelim])
+        size_z    = (size - size.mean()) / (size.std() + 1e-6)
+
+        twhite    = np.array([f['whitespace_above'] + f['whitespace_below']
+                            for f in prelim])
+        twhite_z  = (twhite - twhite.mean()) / (twhite.std() + 1e-6)
+
+        for i, f in enumerate(prelim):
+            f['_heading_score'] = (
+                5.0 * (1 if f['is_centered'] else 0)     # ← top priority
+                + 4.0 * twhite_z[i]                        # ← isolation
+                + 2.0 * size_z[i]                          # ← font size
+                + 1.0 * (1 if f['is_bold'] else 0)         # ← extras
+                + 0.5 * (1 if f['starts_with_number'] else 0)
+            )
+
+        # -----------------------------------------------------------
+        # 2. keep only the top tail of scores  (µ + 0.8σ)
+        # -----------------------------------------------------------
+        scores  = np.array([f['_heading_score'] for f in prelim])
+        cut_off = scores.mean() + 0.8 * scores.std()
+        cands   = [f for f in prelim if f['_heading_score'] >= cut_off]
+        if not cands:
+            return []
+
+        # -----------------------------------------------------------
+        # 3. cluster by visual style  (font, bold, centred)
+        # -----------------------------------------------------------
+        def style_key(f):
+            return (round(f['font_size'], 1), f['is_bold'], f['is_centered'])
+
+        clusters = defaultdict(list)
+        for f in cands:
+            clusters[style_key(f)].append(f)
+
+        # discard 1-off clusters – usually noise
+        clusters = {k: v for k, v in clusters.items() if len(v) >= 2}
+        if not clusters:
+            return []
+
+        # -----------------------------------------------------------
+        # 4. map the largest three clusters → H1 / H2 / H3
+        # -----------------------------------------------------------
+        order = sorted(clusters.items(),
+                    key=lambda kv: (-np.mean([x['font_size'] for x in kv[1]]),
+                                    -len(kv[1])))[:max_heading_levels]
+
+        level_by_key = {k: f"H{idx+1}" for idx, (k, _) in enumerate(order)}
+
+        labelled = []
+        for key, members in clusters.items():
+            lvl = level_by_key.get(key)
+            if not lvl:
+                continue
+            for m in members:
+                m['level'] = lvl
+                labelled.append(m)
+
+        labelled.sort(key=lambda f: (f['page_num'], f['y0']))
+        return labelled
+
+
+import time, json
 from pathlib import Path
-import fitz  # PyMuPDF
-import pandas as pd
 
 start_time = time.time()
+extractor  = PDFHeuristicExtractor()
 
-# Step 1: Create an instance
-extractor = PDFHeuristicExtractor()
+pdf_path   = r"C:\Users\91896\Desktop\1A\Adobe-1A\data\pdfs\attention is all you need.pdf"
+outline    = extractor.extract_outline(pdf_path)
 
-# Step 2: Load the PDF
-pdf_path = r"C:\Users\91896\Desktop\1A\Adobe-1A\data\pdfs\9_1_1961.pdf"
-doc = fitz.open(pdf_path)
+# print to screen
+print(json.dumps(outline, indent=2, ensure_ascii=False))  
 
-# Step 3: Extract features
-extractor._analyze_global_properties(doc)  # Setup font sizes & frequency
-features = []
-for page_num, page in enumerate(doc):
-    page_features = extractor._extract_page_features(page, page_num)
-    features.extend(page_features)
+# optional: save files
+current_dir = Path(__file__).parent
+pre_dir     = current_dir / "data" / "pre"
+pre_dir.mkdir(parents=True, exist_ok=True)
 
-# Step 4: Compute contextual features
-extractor._compute_contextual_features(features)
-
-# Step 5: Save features to JSON in "data/pre/[fileName]_preprocess.json"
-# Get the current script's directory
-current_dir = Path(__file__).resolve().parent
-
-# Create target directory
-target_dir = current_dir / "data" / "pre"
-target_dir.mkdir(parents=True, exist_ok=True)
-
-# Extract filename without extension
 pdf_name = Path(pdf_path).stem
-output_path = target_dir / f"{pdf_name}_preprocess.json"
+with open(pre_dir / f"{pdf_name}_outline.json", "w", encoding="utf-8") as f:
+    json.dump(outline, f, indent=2, ensure_ascii=False)
 
-# Save features
-extractor.save_features(features, str(output_path))
+features = extractor.extract_document_features(pdf_path)
+extractor.save_features(features, str(pre_dir / f"{pdf_name}_features.json"))
 
-# Step 6: Load features back (optional)
-loaded_features = extractor.load_features(str(output_path))
-
-# Step 7: Use or inspect
-df = pd.DataFrame(loaded_features)
-print(df.head())
-
-end_time = time.time()
-print(f"Execution time: {end_time - start_time:.4f} seconds")
+print(f"Execution time: {time.time() - start_time:.2f} s")

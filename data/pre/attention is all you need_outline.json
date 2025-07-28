@@ -1,0 +1,165 @@
+{
+  "title": "arXiv:1706.03762v7  [cs.CL]",
+  "outline": [
+    {
+      "level": "H2",
+      "text": "Provided proper attribution is provided,",
+      "page": 1
+    },
+    {
+      "level": "H2",
+      "text": "Google hereby grants permission to",
+      "page": 1
+    },
+    {
+      "level": "H2",
+      "text": "reproduce the tables and figures in this paper solely for use in journalistic or",
+      "page": 1
+    },
+    {
+      "level": "H2",
+      "text": "scholarly works.",
+      "page": 1
+    },
+    {
+      "level": "H1",
+      "text": "1Introduction",
+      "page": 2
+    },
+    {
+      "level": "H1",
+      "text": "2Background",
+      "page": 2
+    },
+    {
+      "level": "H1",
+      "text": "3Model Architecture",
+      "page": 2
+    },
+    {
+      "level": "H3",
+      "text": "Figure 2:",
+      "page": 4
+    },
+    {
+      "level": "H3",
+      "text": "(left)",
+      "page": 4
+    },
+    {
+      "level": "H3",
+      "text": "Scaled Dot-Product Attention.",
+      "page": 4
+    },
+    {
+      "level": "H3",
+      "text": "(right)",
+      "page": 4
+    },
+    {
+      "level": "H3",
+      "text": "Multi-Head Attention consists of several",
+      "page": 4
+    },
+    {
+      "level": "H3",
+      "text": "output values.",
+      "page": 5
+    },
+    {
+      "level": "H3",
+      "text": "These are concatenated and once again projected,",
+      "page": 5
+    },
+    {
+      "level": "H3",
+      "text": "resulting in the final values,",
+      "page": 5
+    },
+    {
+      "level": "H3",
+      "text": "as",
+      "page": 5
+    },
+    {
+      "level": "H1",
+      "text": "4Why Self-Attention",
+      "page": 6
+    },
+    {
+      "level": "H3",
+      "text": "length n is smaller than the representation dimensionality d,",
+      "page": 7
+    },
+    {
+      "level": "H3",
+      "text": "which is most often the case with",
+      "page": 7
+    },
+    {
+      "level": "H1",
+      "text": "5Training",
+      "page": 7
+    },
+    {
+      "level": "H1",
+      "text": "6Results",
+      "page": 8
+    },
+    {
+      "level": "H3",
+      "text": "development set,",
+      "page": 9
+    },
+    {
+      "level": "H3",
+      "text": "newstest2013.",
+      "page": 9
+    },
+    {
+      "level": "H3",
+      "text": "We used beam search as described in the previous section,",
+      "page": 9
+    },
+    {
+      "level": "H3",
+      "text": "but no",
+      "page": 9
+    },
+    {
+      "level": "H1",
+      "text": "7Conclusion",
+      "page": 10
+    },
+    {
+      "level": "H3",
+      "text": "Kyunghyun Cho,",
+      "page": 11
+    },
+    {
+      "level": "H3",
+      "text": "Bart van Merrienboer,",
+      "page": 11
+    },
+    {
+      "level": "H3",
+      "text": "Caglar Gulcehre,",
+      "page": 11
+    },
+    {
+      "level": "H3",
+      "text": "Fethi Bougares,",
+      "page": 11
+    },
+    {
+      "level": "H3",
+      "text": "Holger Schwenk,",
+      "page": 11
+    },
+    {
+      "level": "H1",
+      "text": "Attention Visualizations",
+      "page": 13
+    }
+  ]
+}
